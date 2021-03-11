@@ -22,14 +22,23 @@ from math import sqrt
 
 
 def comp_auc(target, predictions):
+    """
+    computes auc
+    """
     return roc_auc_score(target, predictions)
 
 
 def com_rsq(target, predictions):
+    """
+    computes r-squared
+    """
     return sqrt(mean_squared_error(target, predictions))
 
 
 def one_model(x_train, x_valid, y_train, y_valid, params):
+    """
+    Trains 1 LGBM model 
+    """
 
     dtrain=lgb.Dataset(x_train, label=y_train)
     dvalid=lgb.Dataset(x_valid, label=y_valid)
@@ -46,6 +55,9 @@ def one_model(x_train, x_valid, y_train, y_valid, params):
     return booster
 
 def fit_model(x_train,y_train,params,CV_folds, preds): # fits Cross Validation
+    """
+    Trains LGBM cross validation 
+    """
 
     folds=KFold(n_splits=CV_folds)
     models=[]
@@ -80,6 +92,9 @@ def fit_model(x_train,y_train,params,CV_folds, preds): # fits Cross Validation
 
 
 def predict(models, set_to_predict,preds):
+    """
+    Predicts average results from list of models
+    """
     
     predictions=np.zeros(set_to_predict.shape[0])
 
@@ -89,6 +104,9 @@ def predict(models, set_to_predict,preds):
     return predictions
 
 def comp_var_imp(models,preds):
+    """
+    Computes variable importance of lgbm model(s)
+    """
 
     importance_df=pd.DataFrame()
     importance_df['Feature']=preds
@@ -102,6 +120,9 @@ def comp_var_imp(models,preds):
     return importance_df
 
 def plot_importance(models, imp_type, preds ,ret=False, show=True, n_predictors = 100):
+    """
+    Plots variable importances
+    """
     if ((imp_type!= 'Importance_gain' ) & (imp_type != 'Importance_weight')):
         raise ValueError('Only importance_gain or importance_gain is accepted')
 
@@ -118,6 +139,9 @@ def plot_importance(models, imp_type, preds ,ret=False, show=True, n_predictors 
 
 
 def param_hyperopt(params, x_train,  y_train, n_iter = 500):
+    """
+    Runs hyperparameter optimization
+    """
 
     train_data = lgb.Dataset(x_train, label = y_train)
 
@@ -172,7 +196,9 @@ def param_hyperopt(params, x_train,  y_train, n_iter = 500):
 
 
 def print_shap_values(preds, cols_num, cols_cat, x_train, y_train, params):
-        
+    """
+    Computes shap values of lgbm model
+    """
     x_train = x_train[preds]
 
 
@@ -205,7 +231,9 @@ def print_shap_values(preds, cols_num, cols_cat, x_train, y_train, params):
         
 
 def print_shap_interaction_matrix(preds, set_to_shap, explainer):
-
+    """
+    Computes matrix of shap interaction values and prints it
+    """
 
     shap_inter_values = explainer.shap_interaction_values(set_to_shap)
 
@@ -220,7 +248,9 @@ def print_shap_interaction_matrix(preds, set_to_shap, explainer):
 
 
 def shap_dependence_plot(x_train, cols_cat, shap_values, x, y=None):
-
+    """
+    Plots shap dependence plot for 1 variable
+    """
     if x in cols_cat:         
         print('Encoding of categories for your variable')   
         labels, uniques = pd.factorize(x_train[x].cat.add_categories('NA').fillna('NA'))

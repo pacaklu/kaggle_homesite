@@ -3,9 +3,14 @@ import gc
 import pandas as pd
 from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import roc_auc_score
-
+from sklearn.neighbors import KNeighborsClassifier
+import itertools
 
 def scaling(data_to_train,data,column):
+    """
+    Fits and transforms min-max scaling to train data (data_to_train).
+    Afterwards predicts this tranformation test data (data).
+    """
     minik=data_to_train[column].min()
     maxik=data_to_train[column].max()
     data_to_train[column+'_scaled']=(data_to_train[column]-minik)/(maxik-minik)
@@ -15,24 +20,31 @@ def scaling(data_to_train,data,column):
 
     
 def pca_fit(data,sloupce,pocet):
+    """
+    Fits PCA model from data
+    """
     pca = PCA(n_components=pocet)
     pca.fit(data[sloupce])
     return pca
 
 def pca_transform(pca,data,sloupce):
+    """
+    predicts already fited PCA model
+    """
+
     names=[]
     for i in range(len(sloupce)):
         names.append('pc{}'.format(i+1))
     df_pca = pd.DataFrame(data = pca.transform(data[sloupce]), columns = names)
     return df_pca
 
-from sklearn.neighbors import KNeighborsClassifier
-import itertools
-
 def findsubsets(s, n): 
     return list(itertools.combinations(s, n)) 
 
 def knn_grid_search(cols_sure,cols_to_test,num_nn_to_test,X_train,X_test,y_train,y_test):
+    """
+    Looks for optimal knn predictors and number of neighbors
+    """
 
     df_vysledku=pd.DataFrame(columns=['preds','num_nn','perf_train','perf_test'])
 
@@ -65,7 +77,9 @@ def knn_grid_search(cols_sure,cols_to_test,num_nn_to_test,X_train,X_test,y_train
 
 
 def knn_fit(cols,num_nn,X_train,y_train,X_predict):
-
+    """
+    Fits knn with givel columns and number of neighbours
+    """
     neigh = KNeighborsClassifier(n_neighbors=num_nn,weights='uniform')
     neigh.fit(X_train[cols], y_train)
 

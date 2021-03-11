@@ -10,6 +10,9 @@ from sklearn.model_selection import TimeSeriesSplit
 
 
 def detect_types(data):
+    """
+    Separates columns to numerical ones and categorical ones
+    """
     numerical_preds=[]
     categorical_preds=[]
      
@@ -26,6 +29,10 @@ def detect_types(data):
 
 
 def graph_exploration(feature_binned,target):
+    """
+    Function that visualises relationship between given binned variable and 
+    binary target
+    """
   
     if(sum(feature_binned.isnull())>0):
         feature_binned=feature_binned.cat.add_categories('NA').fillna('NA')
@@ -45,6 +52,10 @@ def graph_exploration(feature_binned,target):
     
     
 def graph_exploration_continuous(feature_binned,target):
+    """
+    Function that visualises relationship between given binned variable and 
+    continuous target
+    """
   
     if(sum(feature_binned.isnull())>0):
         feature_binned=feature_binned.cat.add_categories('NA').fillna('NA')
@@ -60,6 +71,10 @@ def graph_exploration_continuous(feature_binned,target):
     
     
 def replace_categories(train_set,test_set,categorical_preds,num_categories):   
+    """
+    Merges categories of variables with more than num_categories categories
+    and predits this transformation to test data
+    """
     for i in categorical_preds:
         if train_set[i].nunique()>num_categories:
             print(i)
@@ -72,8 +87,10 @@ def replace_categories(train_set,test_set,categorical_preds,num_categories):
 
 
 def reduce_mem_usage(df):
-    """ iterate through all the columns of a dataframe and modify the data type
-        to reduce memory usage.        
+    """
+    Downloaded function. 
+    Iterate through all the columns of a dataframe and modify the data type
+    to reduce memory usage.        
     """
     start_mem = df.memory_usage().sum() / 1024**2
     print('Memory usage of dataframe is {:.2f} MB'.format(start_mem))
